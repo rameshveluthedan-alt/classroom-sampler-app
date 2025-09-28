@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Classroom Sampler</title>
     <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
-  }
-}
-</script>
-</head>
+    <!-- 1. Add Babel to translate TSX for the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://aistudiocdn.com/react@^19.1.1/",
+        "react": "https://aistudiocdn.com/react@^19.1.1",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+        "react-dom/client": "https://aistudiocdn.com/react-dom@^19.1.1/client"
+      }
+    }
+    </script>
+  </head>
   <body class="bg-slate-100">
     <div id="root"></div>
+    <!-- 2. Change the script type so Babel can process it -->
+    <script type="text/babel" data-type="module" src="index.tsx"></script>
   </body>
 </html>
