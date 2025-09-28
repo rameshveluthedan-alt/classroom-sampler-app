@@ -1,0 +1,108 @@
+import React from 'react';
+import { SampleResult } from '../types';
+
+interface ResultsScreenProps {
+  results: SampleResult;
+  onStartNew: () => void;
+}
+
+const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onStartNew }) => {
+  const { params, k, start, mainSample, reserveSample } = results;
+
+  const handleDownload = () => {
+    const fileContent = `
+Classroom Sampler Results
+
+Date: ${new Date().toLocaleDateString()}
+
+--- PARAMETERS ---
+Grade: ${params.grade}
+Total Students Present (N): ${params.totalStudents}
+Students to Sample (n): ${params.sampleSize}
+Reserve List Size: ${params.reserveSize}
+
+--- SAMPLING INFO ---
+Interval (k): ${k}
+Random Start: ${start}
+
+--- MAIN SAMPLE (${mainSample.length} students) ---
+${mainSample.join(', ')}
+
+--- RESERVE LIST (${reserveSample.length} students) ---
+${reserveSample.join(', ')}
+    `.trim();
+
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sampling_results_grade_${params.grade}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const ResultSection: React.FC<{title: string; children: React.ReactNode}> = ({ title, children }) => (
+    <div className="mb-6">
+      <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">{title}</h3>
+      {children}
+    </div>
+  );
+
+  const StudentNumber: React.FC<{num: number}> = ({ num }) => (
+    <div className="flex items-center justify-center bg-slate-100 text-slate-700 font-mono text-lg rounded-md p-2 shadow-sm min-w-[40px]">
+      {num}
+    </div>
+  );
+  
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 w-full">
+      <h2 className="text-2xl font-bold text-slate-700 mb-6 text-center">Sampling Results</h2>
+      
+      <ResultSection title="Parameters">
+        <div className="grid grid-cols-2 gap-4 text-sm bg-slate-50 p-4 rounded-lg">
+            <p><span className="font-semibold">Grade:</span> {params.grade}</p>
+            <p><span className="font-semibold">Total (N):</span> {params.totalStudents}</p>
+            <p><span className="font-semibold">Sample (n):</span> {params.sampleSize}</p>
+            <p><span className="font-semibold">Reserve:</span> {params.reserveSize}</p>
+            <p><span className="font-semibold">Interval (k):</span> {k}</p>
+            <p><span className="font-semibold">Start:</span> {start}</p>
+        </div>
+      </ResultSection>
+
+      <ResultSection title={`Main Sample (${mainSample.length} students)`}>
+        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+          {mainSample.map(num => <StudentNumber key={`main-${num}`} num={num} />)}
+        </div>
+      </ResultSection>
+
+      <ResultSection title={`Reserve List (${reserveSample.length} students)`}>
+        {reserveSample.length > 0 ? (
+          <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+            {reserveSample.map(num => <StudentNumber key={`reserve-${num}`} num={num} />)}
+          </div>
+        ) : (
+          <p className="text-slate-500 text-sm">No reserve students selected.</p>
+        )}
+      </ResultSection>
+      
+      <div className="mt-8 space-y-3">
+        <button
+          onClick={handleDownload}
+          className="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-transform transform hover:scale-105"
+        >
+          Download Results (.txt)
+        </button>
+        <button
+          onClick={onStartNew}
+          className="w-full bg-slate-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 transition-transform transform hover:scale-105"
+        >
+          Start New Sample
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ResultsScreen;
