@@ -17,4 +17,7 @@ Eliminates manual calculation errors and saves significant time.
 React · TypeScript · Google AI Studio · Google Cloud
 
 ## Live App
-[Your deployed app URL here]
+https://systematic-sampling.web.app
+
+## Hosting
+Firebase Hosting (Google Cloud)
